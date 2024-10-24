@@ -18,14 +18,15 @@ export const createTeam = async (req, res) => {
     }
 
     // Generate invitation code
-    const invitationCode = generateInvitationCode();
+    const codeInvitation = generateInvitationCode(); // Cambiado a codeInvitation
+    console.log('Generated invitation code:', codeInvitation);
 
     // Create team and assign the user as the leader
     const newTeam = new Team({
       name,
-      invitationCode,
+      codeInvitation, // Cambiado a codeInvitation
       leader: user._id,
-      users: [user._id],
+      users: [user._id], // Cambiado a "users" en lugar de "Users"
     });
 
     await newTeam.save();
@@ -40,7 +41,8 @@ export const createTeam = async (req, res) => {
       team: newTeam,
     });
   } catch (error) {
-    res.status(500).json({ message: 'Error creating team' });
+    console.error('Error creating team:', error); // Detallar el error en los logs
+    res.status(500).json({ message: 'Error creating team', error: error.message });
   }
 };
 

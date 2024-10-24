@@ -11,7 +11,7 @@ const router = Router();
 router.use('/auth', authRoutes);
 
 router.use('/user',  routerUser);
-router.use('/team', protect, routerTeam);
+router.use('/team', routerTeam);
 router.use('/sensor', protect, routerSensor);
 
 export default router;
