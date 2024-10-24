@@ -33,10 +33,10 @@ export const register = async (req, res) => {
 };
 
 export const login = async (req, res) => {
-  const { username, password } = req.body; // Cambiado a 'username' en lugar de 'email'
+  const { username, password } = req.body;
 
   try {
-    const user = await User.findOne({ username }); // Buscando por 'username' ya que no usas 'email'
+    const user = await User.findOne({ username });
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -55,7 +55,7 @@ export const login = async (req, res) => {
     res.status(200).json({ 
       message: 'Login successful', 
       token, 
-      role: user.role // Incluir el rol del usuario en la respuesta
+      role: user.role
     });
   } catch (error) {
     res.status(500).json({ message: 'Error logging in' });
@@ -122,7 +122,7 @@ export const registerAndCreateTeam = async (req, res) => {
 
     // Crear equipo y asignar al usuario como líder
     const newTeam = new Team({
-      name: teamName, // El nombre del equipo lo pasamos en la solicitud
+      name: teamName,
       codeInvitation,
       leader: newUser._id,
       users: [newUser._id],
@@ -130,18 +130,27 @@ export const registerAndCreateTeam = async (req, res) => {
 
     await newTeam.save();
 
-    // Actualizar al usuario para que sea líder y asignarle el equipo
     newUser.team = newTeam._id;
     newUser.isLeader = true;
     await newUser.save();
 
     res.status(201).json({
       message: 'User and team created successfully',
-      user: newUser,
-      team: newTeam,
+      user: {
+        id: newUser._id,
+        username: newUser.username,
+        role: newUser.role,
+      },
+      team: {
+        id: newTeam._id,
+        name: newTeam.name,
+        codeInvitation: newTeam.codeInvitation,
+        leader: newUser._id,
+      },
     });
   } catch (error) {
     res.status(500).json({ message: 'Error registering user and creating team', error: error.message });
   }
 };
+
 
