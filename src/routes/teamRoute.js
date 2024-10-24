@@ -1,15 +1,15 @@
 import { Router } from 'express';
-import { createTeam, joinTeam, deleteTeam } from '../controllers/teamController.js';
+import { createTeam, joinTeam, deleteTeam, getTeamInfo } from '../controllers/teamController.js';
+import { protect } from '../middlewares/authMiddleware.js';
 
 const router = Router();
 
-// Route to create a team
 router.post('/create', createTeam);
 
-// Route to join a team
 router.post('/join', joinTeam);
 
-// Route to delete a team (only leader)
-router.delete('/delete', deleteTeam);
+router.delete('/delete', protect, deleteTeam);
+
+router.get('/user/:userId/team', protect, getTeamInfo);
 
 export default router;

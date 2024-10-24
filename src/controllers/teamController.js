@@ -110,3 +110,41 @@ export const deleteTeam = async (req, res) => {
     res.status(500).json({ message: 'Error deleting the team' });
   }
 };
+
+export const getTeamInfo = async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    // Buscar al usuario por su ID
+    const user = await User.findById(userId).populate('team');
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Verificar si el usuario pertenece a un equipo
+    if (!user.team) {
+      return res.status(404).json({ message: 'User does not belong to any team' });
+    }
+
+    // Obtener la información del equipo
+    const team = await Team.findById(user.team);
+    if (!team) {
+      return res.status(404).json({ message: 'Team not found' });
+    }
+
+    // Devolver la información del equipo
+    res.status(200).json({
+      message: 'Team information retrieved successfully',
+      team: {
+        id: team._id,
+        name: team.name,
+        codeInvitation: team.codeInvitation,
+        leader: team.leader,
+        users: team.users,
+        createdAt: team.createdAt,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Error retrieving team information', error: error.message });
+  }
+};
