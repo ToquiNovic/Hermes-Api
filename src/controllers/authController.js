@@ -153,4 +153,65 @@ export const registerAndCreateTeam = async (req, res) => {
   }
 };
 
+export const registerAndJoinTeamWithCode = async (req, res) => {
+  const { username, password, role, codeInvitation } = req.body;
 
+  try {
+    // Verificar si ya existe un usuario con el mismo username
+    const existingUser = await User.findOne({ username });
+    if (existingUser) {
+      return res.status(400).json({ message: 'User already exists' });
+    }
+
+    // Buscar el equipo por el código de invitación
+    const team = await Team.findOne({ codeInvitation });
+    if (!team) {
+      return res.status(404).json({ message: 'Invalid invitation code or team not found' });
+    }
+
+    // Verificar que el equipo tenga el campo `users` inicializado
+    if (!Array.isArray(team.users)) {
+      team.users = []; // Inicializar el arreglo si no existe
+    }
+
+    // Hashear la contraseña
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Crear el nuevo usuario
+    const newUser = new User({
+      username,
+      password: hashedPassword,
+      role: role || 'student',
+    });
+
+    await newUser.save();
+
+    // Añadir el usuario al equipo
+    team.users.push(newUser._id);
+    await team.save();
+
+    // Actualizar el usuario para asignarle el equipo
+    newUser.team = team._id;
+    newUser.isLeader = false; // No es el líder ya que solo se está uniendo
+    await newUser.save();
+
+    res.status(201).json({
+      message: 'User registered and joined the team successfully',
+      user: {
+        id: newUser._id,
+        username: newUser.username,
+        role: newUser.role,
+        team: newUser.team,
+      },
+      team: {
+        id: team._id,
+        name: team.name,
+        codeInvitation: team.codeInvitation,
+        leader: team.leader,
+        users: team.users.length, // Número de usuarios en el equipo
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Error registering user and joining team', error: error.message });
+  }
+};
