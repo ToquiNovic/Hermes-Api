@@ -54,6 +54,7 @@ export const login = async (req, res) => {
     // Devolver el token y el rol del usuario
     res.status(200).json({ 
       message: 'Login successful', 
+      _id: user._id,
       token, 
       role: user.role
     });
