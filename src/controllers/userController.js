@@ -40,7 +40,7 @@ export const getUserById = async (req, res) => {
 // Update user info (except password)
 export const updateUserInfo = async (req, res) => {
   const { userId } = req.params;
-  const { username, email } = req.body; // Other fields you want to allow for update
+  const { username, email } = req.body;
 
   try {
     const user = await User.findById(userId);
@@ -79,9 +79,18 @@ export const deleteUser = async (req, res) => {
 // Get all users (for admin purposes)
 export const getAllUsers = async (req, res) => {
   try {
-    const users = await User.find();
+    const users = await User.find()
+      .select('-password')
+      .populate({
+        path: 'team',
+        select: 'name invitationCode',
+        options: { strictPopulate: false },
+      });
+
     res.status(200).json({ users });
   } catch (error) {
-    res.status(500).json({ message: 'Error fetching users' });
+    res.status(500).json({ message: 'Error fetching users', error: error.message });
   }
 };
+
+

@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const usuarioSchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema({
   username: {
     type: String,
     required: true,
@@ -10,14 +10,22 @@ const usuarioSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  equipo: {
+  team: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Equipo',
+    ref: 'Team',
   },
-  esLider: {
+  isLeader: {
     type: Boolean,
-    default: false, // Solo será true si el usuario crea el equipo
+    default: false,
+  },
+  role: {
+    type: String,
+    enum: ['admin', 'student'],
+    default: 'student',
+  },
+  refreshToken: {
+    type: String,
   },
 }, { timestamps: true });
 
-export default mongoose.model('Usuario', usuarioSchema);
+export default mongoose.model('User', userSchema);

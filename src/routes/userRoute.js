@@ -1,27 +1,23 @@
 import { Router } from 'express';
-import { 
-  updatePassword, 
-  getUserById, 
-  updateUserInfo, 
-  deleteUser, 
-  getAllUsers 
-} from '../controllers/userController.js';
+import { getAllUsers, updatePassword, getUserById, updateUserInfo, deleteUser } from '../controllers/userController.js';
+import { protect } from '../middlewares/authMiddleware.js';
+import { checkRole } from '../middlewares/checkRole.js';
 
 const router = Router();
 
-// Route to update password
-router.put('/update-password', updatePassword);
+// Ruta accesible solo por administradores
+router.get('/', protect, checkRole('admin'), getAllUsers);
 
-// Route to get user by ID
-router.get('/:userId', getUserById);
+// Ruta para actualizar contraseña (accesible por el propio usuario)
+router.put('/update-password', protect, updatePassword);
 
-// Route to update user info
-router.put('/:userId', updateUserInfo);
+// Ruta para obtener información del usuario (por admin o por el propio usuario)
+router.get('/:userId', protect, getUserById);
 
-// Route to delete a user
-router.delete('/:userId', deleteUser);
+// Ruta para actualizar información (solo admin o el propio usuario)
+router.put('/:userId', protect, updateUserInfo);
 
-// Route to get all users (for admin purposes)
-router.get('/', getAllUsers);
+// Ruta para eliminar usuario (solo admin)
+router.delete('/:userId', protect, checkRole('admin'), deleteUser);
 
 export default router;

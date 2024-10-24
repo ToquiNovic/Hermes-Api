@@ -1,24 +1,24 @@
 import mongoose from 'mongoose';
 
-const equipoSchema = new mongoose.Schema({
-  nombre: {
+const teamSchema = new mongoose.Schema({
+  name: {
     type: String,
     required: true,
   },
-  codigoInvitacion: {
+  codeInvitation: {
     type: String,
     required: true,
     unique: true,
   },
-  lider: {
+  leader: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Usuario',
+    ref: 'User',
     required: true,
   },
-  usuarios: [{
+  Users: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Usuario',
+    ref: 'User',
   }],
 }, { timestamps: true });
 
-export default mongoose.model('Equipo', equipoSchema);
+export default mongoose.model('team', teamSchema);

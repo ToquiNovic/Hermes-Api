@@ -10,7 +10,7 @@ const router = Router();
 
 router.use('/auth', authRoutes);
 
-router.use('/user', protect, routerUser);
+router.use('/user',  routerUser);
 router.use('/team', protect, routerTeam);
 router.use('/sensor', protect, routerSensor);
 
