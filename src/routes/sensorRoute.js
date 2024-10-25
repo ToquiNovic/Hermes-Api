@@ -7,7 +7,8 @@ import {
   updateSensorData, 
   deleteSensorData, 
   deleteSensor,
-  getUserTeamSensors
+  getUserTeamSensors,
+  getSensorDetailData
 } from '../controllers/sensorController.js';
 import { protect } from '../middlewares/authMiddleware.js';
 
@@ -28,5 +29,6 @@ router.post('/:sensorId/data', addSensorData);
 router.put('/:sensorId/data/:dataId', updateSensorData);
 router.delete('/:sensorId/data/:dataId', deleteSensorData);
 router.get('/user/:userId/sensors', getUserTeamSensors);
+router.get('/:sensorId/data/:dataId', getSensorDetailData);
 
 export default router;

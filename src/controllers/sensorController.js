@@ -229,3 +229,24 @@ export const deleteSensorData = async (req, res) => {
     res.status(500).json({ message: 'Error deleting data' });
   }
 };
+
+export const getSensorDetailData = async (req, res) => {
+  const { sensorId, dataId } = req.params;
+
+  try {
+    const sensor = await Sensor.findById(sensorId);
+    if (!sensor) {
+      return res.status(404).json({ message: 'Sensor not found' });
+    }
+
+    const data = sensor.data.id(dataId);
+    if (!data) {
+      return res.status(404).json({ message: 'Data not found' });
+    }
+
+    // Devuelve la información sin eliminar
+    res.status(200).json({ message: 'Data retrieved successfully', data });
+  } catch (error) {
+    res.status(500).json({ message: 'Error retrieving data' });
+  }
+};
