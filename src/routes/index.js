@@ -1,5 +1,4 @@
 import { Router } from 'express';
-import { protect } from '../middlewares/authMiddleware.js';
 
 import authRoutes from './authRoute.js'; 
 import routerUser from './userRoute.js'; 
@@ -12,6 +11,6 @@ router.use('/auth', authRoutes);
 
 router.use('/user',  routerUser);
 router.use('/team', routerTeam);
-router.use('/sensor', protect, routerSensor);
+router.use('/sensor', routerSensor);
 
 export default router;

@@ -6,13 +6,15 @@ import {
   getSensorData, 
   updateSensorData, 
   deleteSensorData, 
-  deleteSensor 
+  deleteSensor,
+  getUserTeamSensors
 } from '../controllers/sensorController.js';
+import { protect } from '../middlewares/authMiddleware.js';
 
 const router = Router();
 
 // Route to create a sensor
-router.post('/create', createSensor);
+router.post('/create', protect, createSensor);
 
 // Route to get a sensor and its endpoint
 router.get('/:sensorId', getSensorById);
@@ -25,5 +27,6 @@ router.get('/:sensorId/data', getSensorData);
 router.post('/:sensorId/data', addSensorData);
 router.put('/:sensorId/data/:dataId', updateSensorData);
 router.delete('/:sensorId/data/:dataId', deleteSensorData);
+router.get('/user/:userId/sensors', getUserTeamSensors);
 
 export default router;

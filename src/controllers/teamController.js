@@ -116,7 +116,7 @@ export const getTeamInfo = async (req, res) => {
 
   try {
     // Buscar al usuario por su ID
-    const user = await User.findById(userId).populate('team');
+    const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -126,13 +126,13 @@ export const getTeamInfo = async (req, res) => {
       return res.status(404).json({ message: 'User does not belong to any team' });
     }
 
-    // Obtener la información del equipo
-    const team = await Team.findById(user.team);
+    // Obtener la información del equipo y popular los usuarios
+    const team = await Team.findById(user.team).populate('users', 'username isLeader');
     if (!team) {
       return res.status(404).json({ message: 'Team not found' });
     }
 
-    // Devolver la información del equipo
+    // Devolver la información del equipo con los usuarios poblados
     res.status(200).json({
       message: 'Team information retrieved successfully',
       team: {
@@ -140,7 +140,12 @@ export const getTeamInfo = async (req, res) => {
         name: team.name,
         codeInvitation: team.codeInvitation,
         leader: team.leader,
-        users: team.users,
+        users: team.users.map(user => ({
+          id: user._id,
+          username: user.username,
+          isLeader: user.isLeader,
+        })),
+        sensors: team.sensors,
         createdAt: team.createdAt,
       },
     });

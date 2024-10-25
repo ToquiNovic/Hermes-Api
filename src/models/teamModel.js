@@ -15,9 +15,13 @@ const teamSchema = new mongoose.Schema({
     ref: 'User',
     required: true,
   },
-  Users: [{
+  users: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
+  }],
+  sensors: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Sensor',
   }],
 }, { timestamps: true });
 
